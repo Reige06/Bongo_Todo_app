@@ -53,7 +53,12 @@ button {
 .task-list {
   list-style: none;
   padding: 0;
+  max-height: 300px;
+  overflow-y: auto;
+  padding-right: 5px; 
 }
+
+
 
 .task-list li {
   display: flex;

@@ -1,6 +1,9 @@
 import { useState, useEffect } from "react";
 import "./index.css";
 import profile from "./assets/Images/3.png";
+import axios from "axios";
+
+const API_URL = "https://bongo-todolistapp-backend.onrender.com/api/todos"
 
 function App() {
   const [task, setTask] = useState([]);
@@ -21,17 +24,42 @@ function App() {
     localStorage.setItem("darkMode", darkMode);
   }, [darkMode]);
 
+  // Fetch Task from Backend
+  useEffect(() => {
+    axios.get(API_URL)
+    .then((Response) => setTask(Response.data))
+    .catch((error) => console.error('Error fetching data:', error));
+  }, []);
+
+
   // Add Task
   const addTask = () => {
     if (input.trim() === "") return;
-    setTask([...task, { id: Date.now(), text: input, completed: false, editing: false }]);
-    setInput("");
+  
+    const newTask = { description: input, status: "pending" };  
+  
+    axios.post(API_URL, newTask, { headers: { "Content-Type": "application/json" } })
+      .then(response => {
+        if (response.data) {
+          setTask(prevTasks => [...prevTasks, response.data]);
+          setInput(""); 
+        } else {
+          console.error("Invalid response:", response);
+        }
+      })
+      .catch(error => console.error("Error adding task:", error.response?.data || error.message));
   };
 
   // Toggle Task Completion
-  const toggleComplete = (id) => {
-    setTask(task.map(todo => (todo.id === id ? { ...todo, completed: !todo.completed } : todo)));
-  };
+  const toggleComplete = (id, currentStatus) => {
+    const newStatus = currentStatus === "pending" ? "completed" : "pending";  
+
+    axios.patch(`${API_URL}${id}/`, { status: newStatus })
+      .then(response => {
+        setTask(task.map(todo => (todo.id === id ? { ...response.data, editing: false } : todo)));
+      })
+      .catch(error => console.error("Error updating task:", error));
+};
 
   // Enable Editing Mode
   const enableEditing = (id) => {
@@ -39,10 +67,17 @@ function App() {
   };
 
   // Save Edited Task
-  const saveEdit = (id, newText) => {
-    if (newText.trim() === "") return;
-    setTask(task.map(todo => (todo.id === id ? { ...todo, text: newText, editing: false } : todo)));
-  };
+  const saveEdit = (id, newDescription) => {
+    if (newDescription.trim() === "") return;
+
+    axios.patch(`${API_URL}${id}/`, { description: newDescription })
+      .then(response => {
+        setTask(task.map(todo => 
+          todo.id === id ? { ...response.data, editing: false } : todo
+        ));
+      })
+      .catch(error => console.error("Error updating task:", error));
+};
 
   // Cancel Edit
   const cancelEdit = (id) => {
@@ -51,7 +86,9 @@ function App() {
 
   // Delete Task
   const deleteTodo = (id) => {
-    setTask(task.filter(todo => todo.id !== id));
+    axios.delete(`${API_URL}${id}/`)
+      .then(() => setTask(task.filter(todo => todo.id !== id)))
+      .catch(error => console.error("Error deleting task:", error.response?.data || error.message));
   };
 
   // Toggle Dark Mode
@@ -61,8 +98,8 @@ function App() {
 
   // Filter Tasks
   const filteredTask = task.filter(todo => {
-    if (filter === "completed") return todo.completed;
-    if (filter === "pending") return !todo.completed;
+    if (filter === "completed") return todo.status === "completed"; 
+    if (filter === "pending") return todo.status === "pending";
     return true;
   });
 
@@ -106,24 +143,24 @@ function App() {
         {/* Task List */}
         <ul className="task-list">
           {filteredTask.map(todo => (
-            <li key={todo.id} className={todo.completed ? "completed" : "pending"}>
+            <li key={todo.id} className={todo.status === "completed" ? "completed" : "pending"}>
               
               {/* Left Side */}
               <div className="task-left">
                 <input
                   type="checkbox"
-                  checked={todo.completed}
-                  onChange={() => toggleComplete(todo.id)}
+                  checked={todo.status === "completed"}
+                  onChange={() => toggleComplete(todo.id, todo.status)}
                 />
                 {todo.editing ? (
                   <input
                     type="text"
-                    defaultValue={todo.text}
+                    defaultValue={todo.description}
                     onBlur={(e) => saveEdit(todo.id, e.target.value)}
                     autoFocus
                   />
                 ) : (
-                  <span>{todo.text}</span>
+                  <span>{todo.description}</span>
                 )}
               </div>
 

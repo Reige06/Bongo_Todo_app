@@ -39,7 +39,7 @@ body {
 /* Right Side (Tasks) */
 .tasks-container {
   width: 75%;
-  padding: 60px;
+  padding: 30px;
   background: #dcf2f8;
   color: #222;
   display: flex;
@@ -53,16 +53,18 @@ body {
   margin-bottom: 20px;
   flex-direction: column;
 }
-.tasks-container .header h1{
-  margin-bottom: 2em;
 
+.tasks-container .header h1 {
+  margin-bottom: 2em;
 }
+
 .title {
   display: flex;
   justify-content: space-between;
   width: 100%;
   align-items: center;
 }
+
 .task-input {
   display: flex;
   gap: 10px;
@@ -75,6 +77,7 @@ input {
   border: 1px solid #ccc;
   width: 70%;
 }
+
 .filters button {
   margin: 1em;
 }
@@ -95,7 +98,6 @@ button:hover {
   background: #0056b3;
 }
 
-
 .task-list {
   list-style: none;
   padding: 0;
@@ -112,10 +114,23 @@ button:hover {
   padding: 12px;
   border-radius: 5px;
   transition: background 0.3s ease-in-out;
+  flex-wrap: wrap;
 }
 
 .task-list li:hover {
   background: #e9ecef;
+}
+
+.task-list .task-content {
+  flex: 1;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  max-width: 60%;
+}
+
+.task-list .task-actions {
+  display: flex;
+  gap: 10px;
 }
 
 .task-list .pending {
@@ -129,9 +144,9 @@ button:hover {
 }
 
 .task-left {
-  display: flex
-;
+  display: flex;
 }
+
 /* Dark Mode */
 .app-container.dark {
   background: #121212;

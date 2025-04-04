@@ -111,15 +111,18 @@ function App() {
         <img src={profile} alt="Profile" className="profile-img" />
         <h2>Reige J Bongo</h2>
         <p>Admin@domain.com</p>
-      </div>
+      </div>  
 
       {/* Right Side: Tasks Section */}
       <div className="tasks-container">
         <div className="header">
-          <h1>Tasks</h1>
-          <button className="toggle-btn" onClick={toggleDarkMode}>
+          <h1>Todo List App</h1>
+          <div className="title">
+            <h2>Tasks</h2>
+            <button className="toggle-btn" onClick={toggleDarkMode}>
             {darkMode ? "☀️ Light Mode" : "🌙 Dark Mode"}
-          </button>
+            </button>
+          </div>
         </div>
 
         {/* Create Task */}

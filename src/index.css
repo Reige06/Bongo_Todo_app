@@ -88,6 +88,7 @@ button {
   color: white;
   font-weight: bold;
   transition: 0.3s;
+  margin: 0em 2em;
 }
 
 button:hover {
@@ -127,6 +128,10 @@ button:hover {
   color: white;
 }
 
+.task-left {
+  display: flex
+;
+}
 /* Dark Mode */
 .app-container.dark {
   background: #121212;
